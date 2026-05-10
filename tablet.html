@@ -690,6 +690,12 @@
     // Simulate connection status
     connDot.classList.remove('disconnected');
     connText.textContent = 'Conectado';
+
+    // Make functions global for onclick attributes
+    window.openModal = openModal;
+    window.setQuickQty = setQuickQty;
+    window.register = register;
+    window.cancelNegative = cancelNegative;
     }
   </script>
 </body>
