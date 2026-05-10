@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Panfitrión — Registro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f5f4;
+      --surface: #ffffff;
+      --text: #1c1917;
+      --text-secondary: #78716c;
+      --accent: #16a34a;
+      --accent-hover: #15803d;
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+      --warning: #f59e0b;
+      --border: #e7e5e4;
+      --radius: 14px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
+    }
+
+    /* Header */
+    .header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header h1 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .header .connection-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+      margin-right: 6px;
+      animation: pulse 2s infinite;
+    }
+    .header .connection-dot.disconnected {
+      background: var(--danger);
+      animation: none;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .header .status {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+    }
+
+    /* Product Grid */
+    .grid-container {
+      padding: 16px;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .product-btn {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 12px;
+      min-height: 100px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.1s, border-color 0.2s;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .product-btn:active {
+      transform: scale(0.96);
+    }
+    .product-btn:hover {
+      border-color: var(--accent);
+    }
+    .product-btn .name {
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.2;
+      color: var(--text);
+    }
+    .product-btn .count {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .product-btn .count-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+    .empty-state .icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+    .empty-state p {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s, visibility 0.25s;
+    }
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Bottom Sheet Modal */
+    .bottom-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-radius: 24px 24px 0 0;
+      z-index: 101;
+      padding: 24px 20px 32px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .bottom-sheet.active {
+      transform: translateY(0);
+    }
+    .bottom-sheet .handle {
+      width: 40px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+    .bottom-sheet .product-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Toggle +/− */
+    .toggle-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 32px;
+      border-radius: 50px;
+      border: none;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      min-height: 56px;
+      font-family: inherit;
+    }
+    .toggle-btn.add {
+      background: #dcfce7;
+      color: var(--accent);
+    }
+    .toggle-btn.subtract {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+    .toggle-btn .icon { font-size: 1.3rem; }
+
+    /* Number Input */
+    .input-container {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .input-container input {
+      font-family: 'Inter', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      width: 180px;
+      text-align: center;
+      border: 3px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+      color: var(--text);
+      -moz-appearance: textfield;
+    }
+    .input-container input::-webkit-inner-spin-button,
+    .input-container input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
+    .input-container input:focus {
+      border-color: var(--accent);
+    }
+
+    /* Quick Quantity Buttons */
+    .quick-qty {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .quick-qty button {
+      flex: 1;
+      max-width: 120px;
+      padding: 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      font-size: 1.3rem;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 56px;
+      font-family: inherit;
+      color: var(--text);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .quick-qty button:active {
+      background: var(--bg);
+      border-color: var(--accent);
+    }
+
+    /* Error Message */
+    .error-msg {
+      text-align: center;
+      color: var(--danger);
+      font-weight: 600;
+      font-size: 0.95rem;
+      min-height: 24px;
+      margin-bottom: 8px;
+    }
+
+    /* Negative Confirmation */
+    .negative-confirm {
+      text-align: center;
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .negative-confirm p {
+      font-weight: 600;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+    .negative-confirm .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .negative-confirm .actions button {
+      padding: 10px 24px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-family: inherit;
+      min-height: 48px;
+    }
+    .negative-confirm .btn-yes {
+      background: var(--danger);
+      color: #fff;
+    }
+    .negative-confirm .btn-cancel {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    /* Action Buttons */
+    .action-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn-register {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: inherit;
+      min-height: 60px;
+    }
+    .btn-register.add-mode {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-register.add-mode:active {
+      background: var(--accent-hover);
+    }
+    .btn-register.subtract-mode {
+      background: var(--danger);
+      color: #fff;
+    }
+    .btn-register.subtract-mode:active {
+      background: var(--danger-hover);
+    }
+    .btn-cancel {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: transparent;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-family: inherit;
+      min-height: 56px;
+    }
+
+    /* Flash animation for updated items */
+    @keyframes flash-green {
+      0% { background-color: #dcfce7; }
+      100% { background-color: var(--surface); }
+    }
+    .product-btn.flash {
+      animation: flash-green 0.8s ease-out;
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+      .product-btn { min-height: 120px; }
+      .product-btn .name { font-size: 1.2rem; }
+      .product-btn .count { font-size: 2.5rem; }
+    }
+    @media (min-width: 1024px) {
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <h1>🍞 Panfitrión</h1>
+    <div class="status">
+      <span class="connection-dot" id="connDot"></span>
+      <span id="connText">Conectado</span>
+    </div>
+  </header>
+
+  <div class="grid-container">
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Bottom Sheet Modal -->
+  <div class="bottom-sheet" id="bottomSheet">
+    <div class="handle"></div>
+    <div class="product-title" id="modalTitle">Producto</div>
+
+    <div class="toggle-container">
+      <button class="toggle-btn add" id="toggleBtn" type="button">
+        <span class="icon">+</span>
+        <span id="toggleText">Agregar</span>
+      </button>
+    </div>
+
+    <div class="input-container">
+      <input
+        type="number"
+        inputmode="numeric"
+        id="qtyInput"
+        placeholder="0"
+        min="1"
+      >
+    </div>
+
+    <div class="quick-qty">
+      <button type="button" onclick="setQuickQty(10)">10</button>
+      <button type="button" onclick="setQuickQty(20)">20</button>
+      <button type="button" onclick="setQuickQty(30)">30</button>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div id="negativeConfirm" style="display:none;"></div>
+
+    <div class="action-btns">
+      <button class="btn-register add-mode" id="btnRegister" type="button">
+        Registrar
+      </button>
+      <button class="btn-cancel" id="btnCancelModal" type="button">
+        Cancelar
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ===========================
+    // CONFIGURACIÓN
+    // ===========================
+    const STORAGE_KEY = 'panfitrion_productos';
+
+    // ===========================
+    // ESTADO
+    // ===========================
+    let productos = [];
+    let currentProduct = null;
+    let isAddMode = true;
+
+    // ===========================
+    // DOM
+    // ===========================
+    const grid = document.getElementById('productGrid');
+    const overlay = document.getElementById('overlay');
+    const bottomSheet = document.getElementById('bottomSheet');
+    const modalTitle = document.getElementById('modalTitle');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const toggleText = document.getElementById('toggleText');
+    const qtyInput = document.getElementById('qtyInput');
+    const errorMsg = document.getElementById('errorMsg');
+    const negativeConfirm = document.getElementById('negativeConfirm');
+    const btnRegister = document.getElementById('btnRegister');
+    const btnCancelModal = document.getElementById('btnCancelModal');
+    const connDot = document.getElementById('connDot');
+    const connText = document.getElementById('connText');
+
+    // ===========================
+    // LOCAL STORAGE
+    // ===========================
+    function loadProductos() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    }
+
+    function saveProductos(prods) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(prods));
+      window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }));
+    }
+
+    function fetchProductos() {
+      productos = loadProductos();
+      renderGrid();
+    }
+
+    function updateDelta(id, delta) {
+      const prod = productos.find(p => p.id === id);
+      if (prod) {
+        prod.totalDia += delta;
+        saveProductos(productos);
+      }
+      return prod;
+    }
+
+    // ===========================
+    // RENDER
+    // ===========================
+    function renderGrid() {
+      if (productos.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="icon">📦</div>
+            <p>El catálogo está vacío.<br>Agrega productos desde el panel de administración.</p>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = productos.map(p => `
+        <button class="product-btn" data-id="${p.id}" onclick="openModal('${p.id}')">
+          <span class="name">${escapeHtml(p.nombre)}</span>
+          <span class="count">${p.totalDia}</span>
+          <span class="count-label">piezas hoy</span>
+        </button>
+      `).join('');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ===========================
+    // STORAGE EVENT
+    // ===========================
+    window.addEventListener('storage', (e) => {
+      if (e.key === STORAGE_KEY) {
+        productos = loadProductos();
+        renderGrid();
+      }
+    });
+
+    // ===========================
+    // MODAL
+    // ===========================
+    function openModal(id) {
+      currentProduct = productos.find(p => p.id === id);
+      if (!currentProduct) return;
+
+      // Reset state
+      isAddMode = true;
+      qtyInput.value = '';
+      errorMsg.textContent = '';
+      negativeConfirm.style.display = 'none';
+      negativeConfirm.innerHTML = '';
+      updateToggleUI();
+
+      modalTitle.textContent = currentProduct.nombre;
+      overlay.classList.add('active');
+      bottomSheet.classList.add('active');
+    }
+
+    function closeModal() {
+      overlay.classList.remove('active');
+      bottomSheet.classList.remove('active');
+      currentProduct = null;
+      qtyInput.value = '';
+      errorMsg.textContent = '';
+      negativeConfirm.style.display = 'none';
+      negativeConfirm.innerHTML = '';
+    }
+
+    function updateToggleUI() {
+      if (isAddMode) {
+        toggleBtn.className = 'toggle-btn add';
+        toggleBtn.innerHTML = '<span class="icon">+</span><span>Agregar</span>';
+        btnRegister.className = 'btn-register add-mode';
+      } else {
+        toggleBtn.className = 'toggle-btn subtract';
+        toggleBtn.innerHTML = '<span class="icon">−</span><span>Quitar</span>';
+        btnRegister.className = 'btn-register subtract-mode';
+      }
+    }
+
+    function setQuickQty(val) {
+      qtyInput.value = val;
+      errorMsg.textContent = '';
+    }
+
+    function register(delta) {
+      updateDelta(currentProduct.id, delta);
+      closeModal();
+    }
+
+    // ===========================
+    // EVENT LISTENERS
+    // ===========================
+    overlay.addEventListener('click', closeModal);
+    btnCancelModal.addEventListener('click', closeModal);
+
+    toggleBtn.addEventListener('click', () => {
+      isAddMode = !isAddMode;
+      updateToggleUI();
+    });
+
+    btnRegister.addEventListener('click', () => {
+      const qty = parseInt(qtyInput.value);
+      errorMsg.textContent = '';
+      negativeConfirm.style.display = 'none';
+      negativeConfirm.innerHTML = '';
+
+      if (!qty || qty <= 0) {
+        errorMsg.textContent = 'Ingresa una cantidad mayor a 0';
+        return;
+      }
+
+      const delta = isAddMode ? qty : -qty;
+
+      // Check if total would go negative
+      if (currentProduct.totalDia + delta < 0) {
+        negativeConfirm.style.display = 'block';
+        negativeConfirm.innerHTML = `
+          <div class="negative-confirm">
+            <p>⚠️ El total quedará en negativo (${currentProduct.totalDia + delta}). ¿Continuar?</p>
+            <div class="actions">
+              <button class="btn-yes" onclick="register(${delta})">Sí, registrar</button>
+              <button class="btn-cancel" onclick="cancelNegative()">Cancelar</button>
+            </div>
+          </div>`;
+        return;
+      }
+
+      register(delta);
+    });
+
+    function cancelNegative() {
+      negativeConfirm.style.display = 'none';
+      negativeConfirm.innerHTML = '';
+    }
+
+    // Close modal on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // ===========================
+    // INIT
+    // ===========================
+    fetchProductos();
+    // Simulate connection status
+    connDot.classList.remove('disconnected');
+    connText.textContent = 'Local';
+  </script>
+</body>
+</html>

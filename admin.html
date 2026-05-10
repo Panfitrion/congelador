@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panfitrión — Administración</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f5f4;
+      --surface: #ffffff;
+      --text: #1c1917;
+      --text-secondary: #78716c;
+      --accent: #16a34a;
+      --accent-hover: #15803d;
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+      --warning: #f59e0b;
+      --warning-hover: #d97706;
+      --border: #e7e5e4;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Header */
+    .header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header h1 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .header p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 32px;
+    }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title .icon {
+      font-size: 1.2rem;
+    }
+
+    /* Product List */
+    .product-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .product-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .product-item .info {
+      flex: 1;
+    }
+    .product-item .name {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .product-item .count {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .product-item .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-sm {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      min-height: 40px;
+      transition: background 0.15s;
+      color: var(--text);
+    }
+    .btn-sm:active {
+      background: var(--bg);
+    }
+    .btn-sm.danger {
+      color: var(--danger);
+      border-color: #fecaca;
+    }
+    .btn-sm.danger:hover {
+      background: #fef2f2;
+    }
+    .btn-sm.edit {
+      color: var(--accent);
+      border-color: #bbf7d0;
+    }
+    .btn-sm.edit:hover {
+      background: #f0fdf4;
+    }
+
+    /* Inline Edit */
+    .edit-row {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+      align-items: center;
+    }
+    .edit-row input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+    }
+    .edit-row .btn-save {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .edit-row .btn-cancel-edit {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* Add Form */
+    .add-form {
+      background: var(--surface);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .add-form input {
+      flex: 1;
+      padding: 12px 14px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .add-form input:focus {
+      border-color: var(--accent);
+    }
+    .btn-add {
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      min-height: 48px;
+    }
+    .btn-add:active {
+      background: var(--accent-hover);
+    }
+
+    /* Reset Section */
+    .reset-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .reset-card p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .btn-reset {
+      width: 100%;
+      padding: 16px;
+      border-radius: var(--radius);
+      border: none;
+      background: var(--warning);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      min-height: 56px;
+    }
+    .btn-reset:active {
+      background: var(--warning-hover);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1c1917;
+      color: #fff;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      z-index: 200;
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      pointer-events: none;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .toast.success { border-left: 4px solid var(--accent); }
+    .toast.error { border-left: 4px solid var(--danger); }
+
+    /* Confirm Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-box {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 28px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    .modal-box .modal-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+    .modal-box h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .modal-box p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .modal-box .modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .modal-box .modal-actions button {
+      flex: 1;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      font-family: inherit;
+      min-height: 52px;
+    }
+    .modal-box .btn-confirm {
+      border: none;
+    }
+    .modal-box .btn-confirm.danger {
+      background: var(--danger);
+      color: #fff;
+    }
+    .modal-box .btn-confirm.warning {
+      background: var(--warning);
+      color: #fff;
+    }
+    .modal-box .btn-dismiss {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .empty-state .icon { font-size: 2rem; margin-bottom: 8px; }
+    .empty-state p { font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <h1>⚙️ Panfitrión — Administración</h1>
+    <p>Gestiona el catálogo y los conteos del día</p>
+  </header>
+
+  <div class="container">
+    <!-- Section 1: Catálogo -->
+    <div class="section">
+      <div class="section-title">
+        <span class="icon">📦</span> Catálogo de Productos
+      </div>
+      <div class="product-list" id="productList"></div>
+      <form class="add-form" id="addForm">
+        <input type="text" id="newName" placeholder="Nombre del producto" required autocomplete="off">
+        <button type="submit" class="btn-add">Agregar</button>
+      </form>
+    </div>
+
+    <!-- Section 2: Reset -->
+    <div class="section">
+      <div class="section-title">
+        <span class="icon">🔄</span> Reset Diario
+      </div>
+      <div class="reset-card">
+        <p>Reinicia todos los conteos de producción a cero. Úsalo al inicio de cada nuevo día de producción.</p>
+        <button class="btn-reset" id="btnReset">Reiniciar conteos del día</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal-box">
+      <div class="modal-icon" id="modalIcon">⚠️</div>
+      <h3 id="modalTitle">Confirmar</h3>
+      <p id="modalMsg">¿Estás seguro?</p>
+      <div class="modal-actions">
+        <button class="btn-dismiss" id="modalDismiss">Cancelar</button>
+        <button class="btn-confirm danger" id="modalConfirm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ===========================
+    // CONFIGURACIÓN
+    // ===========================
+    const STORAGE_KEY = 'panfitrion_productos';
+
+    // ===========================
+    // ESTADO
+    // ===========================
+    let productos = [];
+    let editingId = null;
+    let pendingAction = null;
+
+    // ===========================
+    // DOM
+    // ===========================
+    const productList = document.getElementById('productList');
+    const addForm = document.getElementById('addForm');
+    const newNameInput = document.getElementById('newName');
+    const confirmModal = document.getElementById('confirmModal');
+    const modalIcon = document.getElementById('modalIcon');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMsg = document.getElementById('modalMsg');
+    const modalConfirm = document.getElementById('modalConfirm');
+    const modalDismiss = document.getElementById('modalDismiss');
+    const btnReset = document.getElementById('btnReset');
+    const toast = document.getElementById('toast');
+
+    // ===========================
+    // LOCAL STORAGE
+    // ===========================
+    function loadProductos() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    }
+
+    function saveProductos(prods) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(prods));
+      window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }));
+    }
+
+    function fetchProductos() {
+      productos = loadProductos();
+      renderList();
+    }
+
+    function createProduct(nombre) {
+      const newProd = {
+        id: crypto.randomUUID(),
+        nombre: nombre.trim(),
+        totalDia: 0,
+        createdAt: new Date().toISOString()
+      };
+      productos.push(newProd);
+      saveProductos(productos);
+      return newProd;
+    }
+
+    function updateProductName(id, nombre) {
+      const prod = productos.find(p => p.id === id);
+      if (prod) {
+        prod.nombre = nombre.trim();
+        saveProductos(productos);
+      }
+      return prod;
+    }
+
+    function deleteProduct(id) {
+      productos = productos.filter(p => p.id !== id);
+      saveProductos(productos);
+    }
+
+    function resetAll() {
+      productos.forEach(p => p.totalDia = 0);
+      saveProductos(productos);
+      return productos;
+    }
+
+    // ===========================
+    // RENDER
+    // ===========================
+    function renderList() {
+      if (productos.length === 0) {
+        productList.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">📦</div>
+            <p>No hay productos en el catálogo.<br>Agrega el primero usando el formulario de abajo.</p>
+          </div>`;
+        return;
+      }
+
+      productList.innerHTML = productos.map(p => {
+        if (editingId === p.id) {
+          return `
+            <div class="product-item" data-id="${p.id}">
+              <div class="edit-row">
+                <input type="text" id="editInput-${p.id}" value="${escapeAttr(p.nombre)}" autofocus>
+                <button class="btn-save" onclick="saveEdit('${p.id}')">Guardar</button>
+                <button class="btn-cancel-edit" onclick="cancelEdit()">Cancelar</button>
+              </div>
+            </div>`;
+        }
+        return `
+          <div class="product-item" data-id="${p.id}">
+            <div class="info">
+              <div class="name">${escapeHtml(p.nombre)}</div>
+              <div class="count">Total hoy: ${p.totalDia} piezas</div>
+            </div>
+            <div class="actions">
+              <button class="btn-sm edit" onclick="startEdit('${p.id}')">Editar</button>
+              <button class="btn-sm danger" onclick="confirmDelete('${p.id}', '${escapeAttr(p.nombre)}')">Eliminar</button>
+            </div>
+          </div>`;
+      }).join('');
+
+      // Focus edit input if editing
+      if (editingId) {
+        const inp = document.getElementById(`editInput-${editingId}`);
+        if (inp) {
+          inp.focus();
+          inp.select();
+        }
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function escapeAttr(text) {
+      return text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    // ===========================
+    // ACTIONS
+    // ===========================
+
+    // Add product
+    addForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre = newNameInput.value.trim();
+      if (!nombre) return;
+
+      try {
+        createProduct(nombre);
+        newNameInput.value = '';
+        showToast('Producto agregado correctamente', 'success');
+      } catch (err) {
+        console.error(err);
+        showToast('Error al agregar producto', 'error');
+      }
+    });
+
+    // Edit product
+    function startEdit(id) {
+      editingId = id;
+      renderList();
+    }
+
+    function cancelEdit() {
+      editingId = null;
+      renderList();
+    }
+
+    async function saveEdit(id) {
+      const input = document.getElementById(`editInput-${id}`);
+      const nombre = input.value.trim();
+      if (!nombre) {
+        showToast('El nombre no puede estar vacío', 'error');
+        return;
+      }
+
+      try {
+        updateProductName(id, nombre);
+        editingId = null;
+        showToast('Producto actualizado', 'success');
+      } catch (err) {
+        console.error(err);
+        showToast('Error al actualizar', 'error');
+      }
+    }
+
+    // Delete product
+    function confirmDelete(id, nombre) {
+      showModal(
+        '🗑️',
+        '¿Eliminar producto?',
+        `¿Eliminar "${nombre}"? Esta acción no se puede deshacer.`,
+        'danger',
+        () => {
+          try {
+            deleteProduct(id);
+            showToast('Producto eliminado', 'success');
+          } catch (err) {
+            console.error(err);
+            showToast('Error al eliminar', 'error');
+          }
+        }
+      );
+    }
+
+    // Reset all
+    btnReset.addEventListener('click', () => {
+      showModal(
+        '🔄',
+        '¿Reiniciar conteos?',
+        '¿Seguro que quieres reiniciar todos los conteos a cero? Esta acción no se puede deshacer.',
+        'warning',
+        () => {
+          try {
+            resetAll();
+            showToast('Conteos reiniciados correctamente', 'success');
+          } catch (err) {
+            console.error(err);
+            showToast('Error al reiniciar conteos', 'error');
+          }
+        }
+      );
+    });
+
+    // ===========================
+    // MODAL
+    // ===========================
+    function showModal(icon, title, msg, type, onConfirm) {
+      modalIcon.textContent = icon;
+      modalTitle.textContent = title;
+      modalMsg.textContent = msg;
+      modalConfirm.className = `btn-confirm ${type}`;
+      modalConfirm.textContent = type === 'danger' ? 'Sí, eliminar' : 'Sí, reiniciar';
+      pendingAction = onConfirm;
+      confirmModal.classList.add('active');
+    }
+
+    function hideModal() {
+      confirmModal.classList.remove('active');
+      pendingAction = null;
+    }
+
+    modalConfirm.addEventListener('click', () => {
+      if (pendingAction) pendingAction();
+      hideModal();
+    });
+
+    modalDismiss.addEventListener('click', hideModal);
+    confirmModal.addEventListener('click', (e) => {
+      if (e.target === confirmModal) hideModal();
+    });
+
+    // ===========================
+    // TOAST
+    // ===========================
+    let toastTimeout;
+    function showToast(msg, type = 'success') {
+      toast.textContent = msg;
+      toast.className = `toast ${type} show`;
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // ===========================
+    // INIT
+    // ===========================
+    fetchProductos();
+  </script>
+</body>
+</html>

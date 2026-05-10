@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panfitrión — Sistema de Inventario de Producción</title>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f5f5f4;
+      color: #1c1917;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      text-align: center;
+      max-width: 600px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      color: #16a34a;
+    }
+    p {
+      font-size: 1.1rem;
+      color: #78716c;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .link {
+      display: block;
+      padding: 1rem 2rem;
+      background: #ffffff;
+      border: 2px solid #e7e5e4;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #1c1917;
+      font-weight: 600;
+      font-size: 1.2rem;
+      transition: all 0.2s;
+    }
+    .link:hover {
+      border-color: #16a34a;
+      background: #f0fdf4;
+    }
+    .link .icon {
+      font-size: 1.5rem;
+      margin-right: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🍞 Panfitrión</h1>
+    <p>Sistema de inventario de producción para panaderías. Gestiona tu catálogo de productos y registra la producción diaria.</p>
+    <div class="links">
+      <a href="admin.html" class="link">
+        <span class="icon">⚙️</span> Panel de Administración
+      </a>
+      <a href="tablet.html" class="link">
+        <span class="icon">📱</span> Registro de Producción
+      </a>
+      <a href="monitor.html" class="link">
+        <span class="icon">📺</span> Monitor de Cocina
+      </a>
+    </div>
+  </div>
+</body>
+</html>
