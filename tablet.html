@@ -49,6 +49,20 @@
       font-size: 1.3rem;
       font-weight: 800;
       letter-spacing: -0.02em;
+      flex: 1;
+      text-align: center;
+    }
+    .header .back-btn {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      transition: background 0.2s;
+    }
+    .header .back-btn:hover {
+      background: var(--bg);
     }
     .header .connection-dot {
       width: 10px;
@@ -233,8 +247,10 @@
       outline: none;
       transition: border-color 0.2s;
       color: var(--text);
+      appearance: textfield;
       -moz-appearance: textfield;
     }
+    
     .input-container input::-webkit-inner-spin-button,
     .input-container input::-webkit-outer-spin-button {
       -webkit-appearance: none;
@@ -392,6 +408,7 @@
 <body>
 
   <header class="header">
+    <a href="index.html" class="back-btn">← Volver</a>
     <h1>🍞 Panfitrión</h1>
     <div class="status">
       <span class="connection-dot" id="connDot"></span>
