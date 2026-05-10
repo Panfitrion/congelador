@@ -700,6 +700,12 @@
       // INIT
       // ===========================
       fetchProductos();
+
+      // Make functions global for onclick attributes
+      window.saveEdit = saveEdit;
+      window.cancelEdit = cancelEdit;
+      window.startEdit = startEdit;
+      window.confirmDelete = confirmDelete;
     }
   </script>
 </body>
