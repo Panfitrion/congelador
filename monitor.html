@@ -37,11 +37,25 @@
       align-items: center;
       justify-content: space-between;
     }
+    .header .back-btn {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      transition: background 0.2s;
+    }
+    .header .back-btn:hover {
+      background: var(--border);
+    }
     .header h1 {
       font-size: 2rem;
       font-weight: 900;
       letter-spacing: -0.03em;
       color: var(--accent);
+      flex: 1;
+      text-align: center;
     }
     .header .date {
       font-size: 1.1rem;
@@ -53,7 +67,7 @@
     .monitor-list {
       padding: 16px 32px;
       height: calc(100dvh - 100px);
-      overflow: hidden;
+      overflow-y: auto;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
       gap: 10px;
@@ -126,6 +140,7 @@
 <body>
 
   <header class="header">
+    <a href="index.html" class="back-btn">← Volver</a>
     <h1>🍞 Panfitrión</h1>
     <div class="date" id="currentDate"></div>
   </header>
