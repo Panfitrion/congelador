@@ -41,6 +41,25 @@
       position: sticky;
       top: 0;
       z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header .back-btn {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      transition: background 0.2s;
+    }
+    .header .back-btn:hover {
+      background: var(--bg);
+    }
+    .header .title {
+      flex: 1;
+      text-align: center;
     }
     .header h1 {
       font-size: 1.3rem;
@@ -353,8 +372,11 @@
 <body>
 
   <header class="header">
-    <h1>⚙️ Panfitrión — Administración</h1>
-    <p>Gestiona el catálogo y los conteos del día</p>
+    <a href="index.html" class="back-btn">← Volver</a>
+    <div class="title">
+      <h1>⚙️ Panfitrión — Administración</h1>
+      <p>Gestiona el catálogo y los conteos del día</p>
+    </div>
   </header>
 
   <div class="container">
