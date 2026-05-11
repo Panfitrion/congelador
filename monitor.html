@@ -18,6 +18,7 @@
       --accent-dim: #65a30d;
       --border: #292524;
       --radius: 12px;
+      --danger: #dc2626;
     }
 
     body {
@@ -65,8 +66,8 @@
 
     /* Product List */
     .monitor-list {
-      padding: 16px 32px;
-      height: calc(100dvh - 100px);
+      padding: 0 32px 16px;
+      height: calc(100dvh - 160px);
       overflow-y: auto;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -82,6 +83,11 @@
       border-radius: var(--radius);
       border: 1px solid var(--border);
       transition: background 0.3s;
+      cursor: pointer;
+    }
+
+    .monitor-item:hover {
+      background: var(--border);
     }
 
     .monitor-item .name {
@@ -116,13 +122,305 @@
       animation: flash-highlight 1s ease-out;
     }
 
-    .empty-state {
-      text-align: center;
-      padding: 80px 20px;
-      color: var(--text-secondary);
+    /* Add Form */
+    .add-section {
+      padding: 16px 32px;
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
     }
-    .empty-state .icon { font-size: 4rem; margin-bottom: 16px; }
-    .empty-state p { font-size: 1.3rem; line-height: 1.6; }
+    .add-form {
+      display: flex;
+      gap: 10px;
+      max-width: 500px;
+    }
+    .add-form input {
+      flex: 1;
+      padding: 12px 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .add-form input:focus {
+      border-color: var(--accent);
+    }
+    .btn-add {
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      min-height: 48px;
+      transition: background 0.2s;
+    }
+    .btn-add:active {
+      background: var(--accent-dim);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 14px 24px;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 0.95rem;
+      z-index: 200;
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .toast.success { border-left: 4px solid var(--accent); }
+    .toast.error { border-left: 4px solid var(--danger); }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s, visibility 0.25s;
+    }
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Bottom Sheet Modal */
+    .bottom-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-radius: 24px 24px 0 0;
+      z-index: 101;
+      padding: 24px 20px 32px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .bottom-sheet.active {
+      transform: translateY(0);
+    }
+    .bottom-sheet .handle {
+      width: 40px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+    .bottom-sheet .product-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    /* Toggle +/− */
+    .toggle-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 32px;
+      border-radius: 50px;
+      border: none;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      min-height: 56px;
+      font-family: inherit;
+    }
+    .toggle-btn.add {
+      background: #365314;
+      color: var(--accent);
+    }
+    .toggle-btn.subtract {
+      background: #450a0a;
+      color: var(--danger);
+    }
+    .toggle-btn .icon { font-size: 1.3rem; }
+
+    /* Number Input */
+    .input-container {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .input-container input {
+      font-family: 'Inter', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      width: 180px;
+      text-align: center;
+      border: 3px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+      color: var(--text);
+      background: var(--bg);
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+    
+    .input-container input::-webkit-inner-spin-button,
+    .input-container input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
+    .input-container input:focus {
+      border-color: var(--accent);
+    }
+
+    /* Quick Quantity Buttons */
+    .quick-qty {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .quick-qty button {
+      flex: 1;
+      max-width: 120px;
+      padding: 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      font-size: 1.3rem;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 56px;
+      font-family: inherit;
+      color: var(--text);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .quick-qty button:active {
+      background: var(--bg);
+      border-color: var(--accent);
+    }
+
+    /* Error Message */
+    .error-msg {
+      text-align: center;
+      color: var(--danger);
+      font-weight: 600;
+      font-size: 0.95rem;
+      min-height: 24px;
+      margin-bottom: 8px;
+    }
+
+    /* Negative Confirmation */
+    .negative-confirm {
+      text-align: center;
+      background: #451a03;
+      border: 1px solid #d97706;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .negative-confirm p {
+      font-weight: 600;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    .negative-confirm .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .negative-confirm .actions button {
+      padding: 10px 24px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-family: inherit;
+      min-height: 48px;
+    }
+    .negative-confirm .btn-yes {
+      background: var(--danger);
+      color: #fff;
+    }
+    .negative-confirm .btn-cancel {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    /* Action Buttons */
+    .action-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn-register {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: inherit;
+      min-height: 60px;
+    }
+    .btn-register.add-mode {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-register.add-mode:active {
+      background: var(--accent-dim);
+    }
+    .btn-register.subtract-mode {
+      background: var(--danger);
+      color: #fff;
+    }
+    .btn-register.subtract-mode:active {
+      background: #b91c1c;
+    }
+    .btn-cancel {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: transparent;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-family: inherit;
+      min-height: 56px;
+    }
 
     /* Responsive */
     @media (max-width: 768px) {
@@ -145,7 +443,62 @@
     <div class="date" id="currentDate"></div>
   </header>
 
+  <div class="add-section">
+    <form class="add-form" id="addForm">
+      <input type="text" id="newName" placeholder="Nombre del producto" required autocomplete="off">
+      <button type="submit" class="btn-add">Agregar</button>
+    </form>
+  </div>
+
   <div class="monitor-list" id="monitorList"></div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Bottom Sheet Modal -->
+  <div class="bottom-sheet" id="bottomSheet">
+    <div class="handle"></div>
+    <div class="product-title" id="modalTitle">Producto</div>
+
+    <div class="toggle-container">
+      <button class="toggle-btn add" id="toggleBtn" type="button">
+        <span class="icon">+</span>
+        <span id="toggleText">Agregar</span>
+      </button>
+    </div>
+
+    <div class="input-container">
+      <input
+        type="number"
+        inputmode="numeric"
+        id="qtyInput"
+        placeholder="0"
+        min="1"
+      >
+    </div>
+
+    <div class="quick-qty">
+      <button type="button" onclick="setQuickQty(10)">10</button>
+      <button type="button" onclick="setQuickQty(20)">20</button>
+      <button type="button" onclick="setQuickQty(30)">30</button>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div id="negativeConfirm" style="display:none;"></div>
+
+    <div class="action-btns">
+      <button class="btn-register add-mode" id="btnRegister" type="button">
+        Registrar
+      </button>
+      <button class="btn-cancel" id="btnCancelModal" type="button">
+        Cancelar
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
 
   <script>
     // Load Supabase if not already loaded
@@ -171,12 +524,27 @@
     // ===========================
     let productos = [];
     let previousTotals = {};
+    let currentProduct = null;
+    let isAddMode = true;
 
     // ===========================
     // DOM
     // ===========================
     const monitorList = document.getElementById('monitorList');
     const currentDate = document.getElementById('currentDate');
+    const addForm = document.getElementById('addForm');
+    const newNameInput = document.getElementById('newName');
+    const toast = document.getElementById('toast');
+    const overlay = document.getElementById('overlay');
+    const bottomSheet = document.getElementById('bottomSheet');
+    const modalTitle = document.getElementById('modalTitle');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const toggleText = document.getElementById('toggleText');
+    const qtyInput = document.getElementById('qtyInput');
+    const errorMsg = document.getElementById('errorMsg');
+    const negativeConfirm = document.getElementById('negativeConfirm');
+    const btnRegister = document.getElementById('btnRegister');
+    const btnCancelModal = document.getElementById('btnCancelModal');
 
     // ===========================
     // FECHA
@@ -196,6 +564,23 @@
       const { data, error } = await supabase.from('productos').select('*').order('created_at');
       if (error) throw error;
       return data || [];
+    }
+
+    async function createProduct(nombre) {
+      const { data, error } = await supabase.from('productos').insert([{ nombre: nombre.trim(), total_dia: 0 }]).select();
+      if (error) throw error;
+      return data[0];
+    }
+
+    async function updateDelta(id, delta) {
+      // First get current value
+      const { data: current, error: fetchError } = await supabase.from('productos').select('total_dia').eq('id', id).single();
+      if (fetchError) throw fetchError;
+      
+      const newTotal = current.total_dia + delta;
+      const { data, error } = await supabase.from('productos').update({ total_dia: newTotal }).eq('id', id).select();
+      if (error) throw error;
+      return data[0];
     }
 
     async function fetchProductos() {
@@ -221,7 +606,7 @@
         monitorList.innerHTML = `
           <div class="empty-state">
             <div class="icon">📦</div>
-            <p>El catálogo está vacío.<br>Agrégalo desde el panel de administración.</p>
+            <p>El catálogo está vacío.<br>Agregalo desde arriba.</p>
           </div>`;
         return;
       }
@@ -229,7 +614,7 @@
       monitorList.innerHTML = productos.map(p => {
         const changed = oldTotals[p.id] !== undefined && oldTotals[p.id] !== p.total_dia;
         return `
-          <div class="monitor-item ${changed ? 'flash' : ''}" data-id="${p.id}">
+          <div class="monitor-item ${changed ? 'flash' : ''}" data-id="${p.id}" onclick="openModal('${p.id}')">
             <span class="name">${escapeHtml(p.nombre)}</span>
             <span class="count">${p.total_dia}</span>
             <span class="unit">piezas</span>
@@ -242,6 +627,142 @@
       div.textContent = text;
       return div.innerHTML;
     }
+
+    // ===========================
+    // TOAST
+    // ===========================
+    let toastTimeout;
+    function showToast(msg, type = 'success') {
+      toast.textContent = msg;
+      toast.className = `toast ${type} show`;
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // ===========================
+    // ACTIONS
+    // ===========================
+
+    // Add product
+    addForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre = newNameInput.value.trim();
+      if (!nombre) return;
+
+      try {
+        await createProduct(nombre);
+        newNameInput.value = '';
+        showToast('Producto agregado correctamente', 'success');
+      } catch (err) {
+        console.error(err);
+        showToast('Error al agregar producto', 'error');
+      }
+    });
+
+    // ===========================
+    // MODAL
+    // ===========================
+    function openModal(id) {
+      currentProduct = productos.find(p => p.id === id);
+      if (!currentProduct) return;
+
+      // Reset state
+      isAddMode = true;
+      qtyInput.value = '';
+      errorMsg.textContent = '';
+      negativeConfirm.style.display = 'none';
+      negativeConfirm.innerHTML = '';
+      updateToggleUI();
+
+      modalTitle.textContent = currentProduct.nombre;
+      overlay.classList.add('active');
+      bottomSheet.classList.add('active');
+    }
+
+    function closeModal() {
+      overlay.classList.remove('active');
+      bottomSheet.classList.remove('active');
+      currentProduct = null;
+      qtyInput.value = '';
+      errorMsg.textContent = '';
+      negativeConfirm.style.display = 'none';
+      negativeConfirm.innerHTML = '';
+    }
+
+    function updateToggleUI() {
+      if (isAddMode) {
+        toggleBtn.className = 'toggle-btn add';
+        toggleBtn.innerHTML = '<span class="icon">+</span><span>Agregar</span>';
+        btnRegister.className = 'btn-register add-mode';
+      } else {
+        toggleBtn.className = 'toggle-btn subtract';
+        toggleBtn.innerHTML = '<span class="icon">−</span><span>Quitar</span>';
+        btnRegister.className = 'btn-register subtract-mode';
+      }
+    }
+
+    function setQuickQty(val) {
+      qtyInput.value = val;
+      errorMsg.textContent = '';
+    }
+
+    function register(delta) {
+      updateDelta(currentProduct.id, delta);
+      closeModal();
+    }
+
+    // ===========================
+    // EVENT LISTENERS
+    // ===========================
+    overlay.addEventListener('click', closeModal);
+    btnCancelModal.addEventListener('click', closeModal);
+
+    toggleBtn.addEventListener('click', () => {
+      isAddMode = !isAddMode;
+      updateToggleUI();
+    });
+
+    btnRegister.addEventListener('click', () => {
+      const qty = parseInt(qtyInput.value);
+      errorMsg.textContent = '';
+      negativeConfirm.style.display = 'none';
+      negativeConfirm.innerHTML = '';
+
+      if (!qty || qty <= 0) {
+        errorMsg.textContent = 'Ingresa una cantidad mayor a 0';
+        return;
+      }
+
+      const delta = isAddMode ? qty : -qty;
+
+      // Check if total would go negative
+      if (currentProduct.total_dia + delta < 0) {
+        negativeConfirm.style.display = 'block';
+        negativeConfirm.innerHTML = `
+          <div class="negative-confirm">
+            <p>⚠️ El total quedará en negativo (${currentProduct.total_dia + delta}). ¿Continuar?</p>
+            <div class="actions">
+              <button class="btn-yes" onclick="register(${delta})">Sí, registrar</button>
+              <button class="btn-cancel" onclick="cancelNegative()">Cancelar</button>
+            </div>
+          </div>`;
+        return;
+      }
+
+      register(delta);
+    });
+
+    function cancelNegative() {
+      negativeConfirm.style.display = 'none';
+      negativeConfirm.innerHTML = '';
+    }
+
+    // Close modal on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
 
     // ===========================
     // REALTIME
@@ -264,6 +785,12 @@
     setInterval(() => {
       currentDate.textContent = formatDate();
     }, 60000);
+
+    // Make functions global for onclick attributes
+    window.openModal = openModal;
+    window.setQuickQty = setQuickQty;
+    window.register = register;
+    window.cancelNegative = cancelNegative;
     }
   </script>
 </body>
