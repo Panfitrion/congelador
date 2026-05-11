@@ -131,7 +131,7 @@
     .add-form {
       display: flex;
       gap: 10px;
-      max-width: 500px;
+      max-width: 600px;
     }
     .add-form input {
       flex: 1;
@@ -446,6 +446,7 @@
   <div class="add-section">
     <form class="add-form" id="addForm">
       <input type="text" id="newName" placeholder="Nombre del producto" required autocomplete="off">
+      <input type="number" id="newQty" placeholder="Cantidad inicial" min="0" value="0" autocomplete="off">
       <button type="submit" class="btn-add">Agregar</button>
     </form>
   </div>
@@ -534,6 +535,7 @@
     const currentDate = document.getElementById('currentDate');
     const addForm = document.getElementById('addForm');
     const newNameInput = document.getElementById('newName');
+    const newQtyInput = document.getElementById('newQty');
     const toast = document.getElementById('toast');
     const overlay = document.getElementById('overlay');
     const bottomSheet = document.getElementById('bottomSheet');
@@ -566,8 +568,8 @@
       return data || [];
     }
 
-    async function createProduct(nombre) {
-      const { data, error } = await supabase.from('productos').insert([{ nombre: nombre.trim(), total_dia: 0 }]).select();
+    async function createProduct(nombre, qty = 0) {
+      const { data, error } = await supabase.from('productos').insert([{ nombre: nombre.trim(), total_dia: qty }]).select();
       if (error) throw error;
       return data[0];
     }
@@ -606,7 +608,7 @@
         monitorList.innerHTML = `
           <div class="empty-state">
             <div class="icon">📦</div>
-            <p>El catálogo está vacío.<br>Agregalo desde arriba.</p>
+            <p>El catálogo está vacío.<br>Agrega el primero desde arriba.</p>
           </div>`;
         return;
       }
@@ -617,7 +619,7 @@
           <div class="monitor-item ${changed ? 'flash' : ''}" data-id="${p.id}" onclick="openModal('${p.id}')">
             <span class="name">${escapeHtml(p.nombre)}</span>
             <span class="count">${p.total_dia}</span>
-            <span class="unit">piezas</span>
+            <span class="unit">en inventario</span>
           </div>`;
       }).join('');
     }
@@ -649,11 +651,13 @@
     addForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const nombre = newNameInput.value.trim();
+      const qty = parseInt(newQtyInput.value) || 0;
       if (!nombre) return;
 
       try {
-        await createProduct(nombre);
+        await createProduct(nombre, qty);
         newNameInput.value = '';
+        newQtyInput.value = '0';
         showToast('Producto agregado correctamente', 'success');
       } catch (err) {
         console.error(err);
